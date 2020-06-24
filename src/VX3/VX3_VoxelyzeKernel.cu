@@ -356,6 +356,7 @@ __device__ bool VX3_VoxelyzeKernel::doTimeStep(float dt) {
             InitialPositionReinitialized = true;
             InitializeCenterOfMass();
             saveInitialPosition();
+            TurnOffStickinessForNonSingletons(); // sam
         }
 
     }
@@ -371,6 +372,18 @@ __device__ bool VX3_VoxelyzeKernel::doTimeStep(float dt) {
 
 __device__ void VX3_VoxelyzeKernel::InitializeCenterOfMass() {
     initialCenterOfMass = currentCenterOfMass;
+}
+
+// sam:
+__device__ void VX3_VoxelyzeKernel::TurnOffStickinessForNonSingletons() {
+    for (int i=0;i<num_d_voxels;i++) {
+        if (d_voxels[i].mat->sticky) {
+            for (int k=0;k<6;k++) { // check links in all direction
+                if (d_voxels[i].links[k])  // if there is a link
+                    d_voxels[i].mat = &d_voxelMats[0];  // change to non sticky base material
+            }
+        }
+    }
 }
 
 __device__ void VX3_VoxelyzeKernel::removeVoxels() {

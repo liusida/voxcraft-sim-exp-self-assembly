@@ -48,6 +48,7 @@ class VX3_VoxelyzeKernel {
     // for Secondary Experiment
     __device__ void removeVoxels();
     __device__ void InitializeCenterOfMass();
+    __device__ void TurnOffStickinessForNonSingletons(); // sam
 
     /* data */
     bool forceExit = false;
